@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}test{% endblock %}
+
+{% block content %}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>a</th>
+      <th>b</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in data %}
+    <tr>
+      <td> {{ loop.index }} </td>
+      <td>{{ row['a'] }}</td>
+      <td>{{ row['b'] }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+<hr>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<div id="plotly" style="width:100%;height:550px">
+</div>
+
+<script>
+Plotly.d3.csv("{{ url_for('static', filename='color-clustering.csv') }}", function(err, rows){
+  var x = [], y = [], z = [], c = [], x2 = [], y2 = [], z2 = [], c2 = [];
+
+  for (var i=0; i<rows.length; i++) {
+    row = rows[i];
+    x.push( row['x'] );
+    y.push( row['y'] );
+    z.push( row['z'] );
+    c.push( row['c'] );
+    x2.push( row['x2'] );
+    y2.push( row['y2'] );
+    z2.push( row['z2'] );
+    c2.push( row['c2'] );
+  }
+
+var trace1 = {
+  x:x,  y: y, z: z,
+  mode: 'markers',
+  marker: {
+    size: 5,
+    color: c,
+    opacity: 0.1
+  },
+  type: 'scatter3d',
+  name: 'Individual colors',
+};
+
+var trace2 = {
+  x:x2,  y: y2, z: z2,
+  mode: 'markers',
+  marker: {
+    size: 18,
+    color: c2,
+    opacity: 1
+  },
+  type: 'scatter3d',
+  name: 'Dominant Colors'
+};
+
+var data = [trace1, trace2];
+var layout = {
+  dragmode: true,
+  showlegend: false,
+  margin: {
+    l: 0,
+    r: 0,
+    b: 0,
+    t: 0
+  }};
+Plotly.newPlot('plotly', data, layout);
+});
+</script>
+{% endblock %}
