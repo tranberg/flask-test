@@ -22,14 +22,20 @@
   </tbody>
 </table>
 
+<hr>
+
+<h4>AJAX test</h4>
+<button id="request" type="button" class="btn btn-primary">Test</button> &nbsp;
+<span>Response:</span> <span id="response"></span>
 
 <hr>
 
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
 <div id="plotly" style="width:100%;height:550px">
 </div>
+{% endblock %}
 
+{%block scripts %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
 Plotly.d3.csv("{{ url_for('static', filename='color-clustering.csv') }}", function(err, rows){
   var x = [], y = [], z = [], c = [], x2 = [], y2 = [], z2 = [], c2 = [];
@@ -81,6 +87,26 @@ var layout = {
     t: 0
   }};
 Plotly.newPlot('plotly', data, layout);
+});
+</script>
+
+<script>
+// AJAX test
+$(function() {
+    $('#request').click(function() {
+        $.ajax({
+            url: '/async_test',
+            data: {test: 'success'},
+            type: 'POST',
+            success: function(response) {
+                console.log(response);
+                $('#response').html(JSON.parse(response)['test']);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
 });
 </script>
 {% endblock %}
